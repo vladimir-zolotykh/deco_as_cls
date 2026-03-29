@@ -7,13 +7,10 @@ import weakref
 
 
 class Cached(type):
-    # instances = weakref.WeakValueDictionary()
     instances = {}
 
     def __init__(cls, *args, **kwargs):
-        # cls.instances = weakref.WeakValueDictionary()
-        # cls.instances = {}
-        type(cls).instances[cls] = {}
+        type(cls).instances[cls] = weakref.WeakValueDictionary()
 
     def __call__(cls, *args):
         tup = tuple(args)
