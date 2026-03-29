@@ -7,15 +7,20 @@ import weakref
 
 
 class Cached(type):
+    # instances = weakref.WeakValueDictionary()
+    instances = {}
+
     def __init__(cls, *args, **kwargs):
         # cls.instances = weakref.WeakValueDictionary()
-        cls.instances = {}
+        # cls.instances = {}
+        type(cls).instances[cls] = {}
 
     def __call__(cls, *args):
         tup = tuple(args)
-        if tup not in cls.instances:
-            cls.instances[tup] = super().__call__(*args)
-        return cls.instances[tup]
+        D = type(cls).instances
+        if tup not in D:
+            D[tup] = super().__call__(*args)
+        return D[tup]
 
 
 class Spam(metaclass=Cached):
