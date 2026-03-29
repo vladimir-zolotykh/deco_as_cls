@@ -24,6 +24,7 @@ import os
 import logging
 import types
 from functools import wraps
+import pytest
 
 logging.basicConfig(
     # stream=sys.stderr,
@@ -66,7 +67,19 @@ class Spam:
         print(self, x)
 
 
-if __name__ == "__main__":
-    import doctest
+def test_add(capsys):
+    assert add(2, 3) == 5
+    assert add(4, 5) == 9
+    assert add.ncalls == 2
 
-    doctest.testmod(optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE)
+
+def test_bar(capsys):
+    s = Spam()
+    s.bar(1)
+    s.bar(2)
+    s.bar(3)
+    lines = capsys.readouterr().out.splitlines()
+    assert lines[0].endswith(" 1")
+    assert lines[1].endswith(" 2")
+    assert lines[2].endswith(" 3")
+    assert Spam.bar.ncalls == 3
