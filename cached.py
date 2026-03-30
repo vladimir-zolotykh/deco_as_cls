@@ -10,7 +10,6 @@ class Cached(type):
     def __init__(cls, *args, **kwargs):
         super().__init__(*args, **kwargs)
         cls.instances = weakref.WeakValueDictionary()
-        # cls.instances = {}
 
     def __call__(cls, *args, **kwargs):
         key = (args, frozenset(kwargs.items()))
@@ -18,7 +17,6 @@ class Cached(type):
             instance = cls.instances[key]
         else:
             instance = cls.instances[key] = super().__call__(*args, **kwargs)
-        # return cls.instances[key]
         return instance
 
 
