@@ -13,11 +13,10 @@ class Cached(type):
 
     def __call__(cls, *args, **kwargs):
         key = (args, frozenset(kwargs.items()))
-        if key in cls.instances:
-            instance = cls.instances[key]
-        else:
-            instance = cls.instances[key] = super().__call__(*args, **kwargs)
-        return instance
+        if not (key in cls.instances):
+            _ = cls.instances[key] = super().__call__(*args, **kwargs)
+
+        return cls.instances[key]
 
 
 class Spam(metaclass=Cached):
@@ -25,9 +24,19 @@ class Spam(metaclass=Cached):
         print(f"Initialize({name})")
 
 
-if __name__ == "__main__":
+def test_cached(capsys):
     s = Spam("Vladimir")
     t = Spam("Tysch")
     q = Spam("Tysch")
+    cap = capsys.readouterr().out.splitlines()
+    assert cap[0] == "Initialize(Vladimir)"
+    assert cap[1] == "Initialize(Tysch)"
+    assert not (s is t)
+    assert t is q
 
-    print(t is q)
+
+if __name__ == "__main__":
+    import sys
+    import pytest
+
+    pytest.main(sys.argv)
