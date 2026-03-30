@@ -21,6 +21,7 @@ def log_it(func):
         logger.info(f"{func.__name__} called {args}, {kwargs}")
         res = func(*args, **kwargs)
         logger.info(f"{func.__name__} returns {res}")
+        return res
 
     return wrapper
 
@@ -41,13 +42,7 @@ class Mathbox(metaclass=AutoLogMeta):
         return a * b
 
 
-# def test_qutolog(capsys):
-#     mb = Mathbox()
-#     mb.add(10, 5)
-#     mb.mul(17.3, 19.7)
-
-
-if __name__ == "__main__":
+def test_autolog(capsys):
     mb = Mathbox()
-    mb.add(10, 5)
-    mb.mul(17.3, 19.7)
+    assert mb.add(10, 5) == 15
+    assert mb.mul(17.3, 19.7) == 340.81
