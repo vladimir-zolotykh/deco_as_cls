@@ -14,7 +14,14 @@ class Cached(type):
     def __call__(cls, *args, **kwargs):
         key = (args, frozenset(kwargs.items()))
         if not (key in cls.instances):
-            _ = cls.instances[key] = super().__call__(*args, **kwargs)
+
+            # A WeakValueDictionary does not keep objects alive. It
+            # only holds weak references. If there is no strong
+            # reference (`obj') to an object elsewhere, it is immediately
+            # eligible for garbage collection.
+
+            obj = super().__call__(*args, **kwargs)
+            cls.instances[key] = obj
 
         return cls.instances[key]
 
